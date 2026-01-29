@@ -19,6 +19,12 @@
       return;
     }
 
+    // clear root safely
+    root.textContent = "";
+
+    const header = document.createElement("div");
+    header.className = "header";
+
     const nav = document.createElement("nav");
     nav.className = "main-nav";
 
@@ -30,10 +36,10 @@
       nav.appendChild(a);
     });
 
-    root.appendChild(nav);
+    header.appendChild(nav);
+    root.appendChild(header);
   }
 
-  // DOM ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       renderNav("root", db);
