@@ -2,42 +2,126 @@
   "use strict";
 
   /* ====================================================
-   * DATABASE
+   * CONFIG / DATABASE
    * ==================================================== */
-  const db = [
-    {
-      name: "minecraftworlds",
-      nav: [
-        { name: "Home", hash: "#home", class: "nav-home" },
-        { name: "About", hash: "#about", class: "nav-about" },
-        { name: "Contact", hash: "#contact", class: "nav-contact" }
-      ]
+  const app = {
+    name: "minecraftworlds",
+
+    nav: [
+      { label: "Home", route: "#home", class: "nav-home" },
+      { label: "About", route: "#about", class: "nav-about" },
+      { label: "Contact", route: "#contact", class: "nav-contact" }
+    ],
+
+    classRoutes: {
+      "nav-home": "#home",
+      "nav-about": "#about",
+      "nav-contact": "#contact",
+      "go-home": "#home",
+      "go-about": "#about",
+      "go-contact": "#contact"
     }
-  ];
-
-  /* ====================================================
-   * CLASS → ROUTE MAPPING
-   * ==================================================== */
-  const classRoutes = {
-    "nav-home": "#home",
-    "nav-about": "#about",
-    "nav-contact": "#contact",
-
-    // frei nutzbar überall im HTML
-    "go-home": "#home",
-    "go-about": "#about",
-    "go-contact": "#contact"
   };
 
   /* ====================================================
-   * NAVIGATION RENDER
+   * PAGE DEFINITIONS
    * ==================================================== */
-  function renderNav(rootId, data) {
-    const root = document.getElementById(rootId);
-    if (!root) {
-      console.error("Root element not found:", rootId);
-      return;
+  const pages = {
+
+    home(container) {
+      const h = document.createElement("h1");
+      h.textContent = "Welcome to Minecraft Worlds";
+
+      const p = document.createElement("p");
+      p.textContent =
+        "Explore community-created Minecraft maps, worlds and servers.";
+
+      const about = document.createElement("button");
+      about.textContent = "About";
+      about.className = "go-about";
+
+      const contact = document.createElement("button");
+      contact.textContent = "Contact";
+      contact.className = "go-contact";
+
+      container.append(h, p, about, contact);
+    },
+
+    about(container) {
+      const h = document.createElement("h1");
+      h.textContent = "About";
+
+      const p1 = document.createElement("p");
+      p1.textContent =
+        "Minecraft Worlds is a community-driven platform.";
+
+      const p2 = document.createElement("p");
+      p2.textContent =
+        "We focus on quality, security and creativity.";
+
+      const back = document.createElement("button");
+      back.textContent = "Back to Home";
+      back.className = "go-home";
+
+      container.append(h, p1, p2, back);
+    },
+
+    contact(container) {
+      const h = document.createElement("h1");
+      h.textContent = "Contact";
+
+      const p = document.createElement("p");
+      p.textContent = "Send us your feedback or ideas.";
+
+      const form = document.createElement("form");
+
+      const name = document.createElement("input");
+      name.placeholder = "Name";
+      name.required = true;
+
+      const email = document.createElement("input");
+      email.type = "email";
+      email.placeholder = "Email";
+      email.required = true;
+
+      const msg = document.createElement("textarea");
+      msg.placeholder = "Message";
+      msg.required = true;
+
+      const submit = document.createElement("button");
+      submit.type = "submit";
+      submit.textContent = "Send";
+
+      const status = document.createElement("div");
+
+      form.append(name, email, msg, submit);
+      container.append(h, p, form, status);
+
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        status.textContent = "Message sent successfully.";
+        form.reset();
+      });
+    },
+
+    notFound(container) {
+      const h = document.createElement("h1");
+      h.textContent = "404 – Page not found";
+
+      const back = document.createElement("button");
+      back.textContent = "Go Home";
+      back.className = "go-home";
+
+      container.append(h, back);
     }
+  };
+
+  /* ====================================================
+   * NAVIGATION
+   * ==================================================== */
+  function renderNav() {
+    const root = document.getElementById("root");
+    if (!root) return;
 
     root.textContent = "";
 
@@ -47,10 +131,10 @@
     const nav = document.createElement("nav");
     nav.className = "main-nav";
 
-    data[0].nav.forEach(item => {
+    app.nav.forEach(item => {
       const a = document.createElement("a");
-      a.textContent = item.name;
-      a.href = item.hash;
+      a.textContent = item.label;
+      a.href = item.route;
       a.className = item.class;
       nav.appendChild(a);
     });
@@ -60,77 +144,24 @@
   }
 
   /* ====================================================
-   * CONTENT ROUTES
+   * ROUTER
    * ==================================================== */
-  function renderContent() {
+  function renderPage() {
     const content = document.getElementById("content");
     if (!content) return;
 
-    const route = window.location.hash || "#home";
     content.textContent = "";
 
-    switch (route) {
-      case "#about": {
-        const h = document.createElement("h1");
-        h.textContent = "About Minecraft Worlds";
+    const route = (window.location.hash || "#home").replace("#", "");
 
-        const p = document.createElement("p");
-        p.textContent =
-          "A community platform for Minecraft worlds, maps and servers.";
+    (pages[route] || pages.notFound)(content);
 
-        content.append(h, p);
-        break;
-      }
-
-      case "#contact": {
-        const h = document.createElement("h1");
-        h.textContent = "Contact";
-
-        const p = document.createElement("p");
-        p.textContent = "Get in touch with us.";
-
-        const btn = document.createElement("button");
-        btn.textContent = "Back to Home";
-        btn.className = "go-home";
-
-        content.append(h, p, btn);
-        break;
-      }
-
-      case "#home":
-      default: {
-        const h = document.createElement("h1");
-        h.textContent = "Welcome to Minecraft Worlds";
-
-        const p = document.createElement("p");
-        p.textContent =
-          "Explore maps, servers and community projects.";
-
-        const aboutBtn = document.createElement("button");
-        aboutBtn.textContent = "About";
-        aboutBtn.className = "go-about";
-
-        const contactBtn = document.createElement("button");
-        contactBtn.textContent = "Contact";
-        contactBtn.className = "go-contact";
-
-        content.append(h, p, aboutBtn, contactBtn);
-        break;
-      }
-    }
-
-    updateActiveNav(route);
+    updateActiveNav("#" + route);
   }
 
-  /* ====================================================
-   * ACTIVE NAV STATE
-   * ==================================================== */
   function updateActiveNav(route) {
     document.querySelectorAll(".main-nav a").forEach(a => {
-      a.classList.toggle(
-        "active",
-        a.getAttribute("href") === route
-      );
+      a.classList.toggle("active", a.getAttribute("href") === route);
     });
   }
 
@@ -141,10 +172,10 @@
     let el = e.target;
 
     while (el && el !== document.body) {
-      for (const cls in classRoutes) {
+      for (const cls in app.classRoutes) {
         if (el.classList.contains(cls)) {
           e.preventDefault();
-          window.location.hash = classRoutes[cls];
+          window.location.hash = app.classRoutes[cls];
           return;
         }
       }
@@ -153,19 +184,13 @@
   }
 
   /* ====================================================
-   * ROUTER
-   * ==================================================== */
-  function initRouter() {
-    window.addEventListener("hashchange", renderContent);
-    renderContent();
-  }
-
-  /* ====================================================
    * INIT
    * ==================================================== */
   function init() {
-    renderNav("root", db);
-    initRouter();
+    renderNav();
+    renderPage();
+
+    window.addEventListener("hashchange", renderPage);
     document.addEventListener("click", handleClassRouting);
   }
 
