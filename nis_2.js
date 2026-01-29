@@ -890,7 +890,7 @@
         console.log('%c' + '='.repeat(120), 'color: #00ff00; font-size: 14px; font-weight: bold;');
     }, 1000);
     
-})();#
+})();
 ultimateSecurity.scanNow()           // Manueller Scan
 ultimateSecurity.getStatus()         // Aktueller Status
 ultimateSecurity.getReport()         // Vollständiger Report
