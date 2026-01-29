@@ -3,12 +3,11 @@
     {
       name: "minecraftworlds",
       nav: [
-        { name: "Home" },
+        { name: "Home", class="" },
         { name: "About" },
         { name: "Contact" }
       ]
     }
   ];
 
-  console.log(db);
-})();
+  const root = document.getELementbyId= "root")();
